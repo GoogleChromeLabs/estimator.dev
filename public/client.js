@@ -171,7 +171,7 @@ function App() {
           <span style="display:inline-block;background:#ffe426;color:#000;margin:-0.3em 1px 0;padding:.4em 2px 0 .5em;border-radius:3px;font-size:.9em;font-weight:500;">ES</span>timator
         </section>
         <section class="navbar-section">
-          <a href="https://web.dev/modern-js-guide/" class="btn btn-link">
+          <a href="https://web.dev/publish-modern-javascript/" class="btn btn-link">
             Modern JS Guide
             <i class="icon icon-forward mx-1" />
           </a>
@@ -389,7 +389,7 @@ function Result({ url, scripts }) {
       </div>
       <div class="card-footer" style="display:flex;justify-content:center;align-items:center;gap:10px;">
         <span style="font-size:120%;">Ready to shave those bytes?</span>
-        <a class="btn btn-d btn-lg" href="https://web.dev/modern-js-guide/" target="_blank">
+        <a class="btn btn-d btn-lg" href="https://web.dev/publish-modern-javascript/" target="_blank">
           Turn on Modern JS
           <i class="icon icon-arrow-right mx-1" />
         </a>
