@@ -1,0 +1,21 @@
+{
+  "main": "server.js",
+  "type": "module",
+  "scripts": {
+    "start": "wmr",
+    "build": "wmr build --prerender",
+    "start:server": "cd server && node --experimental-modules index.js",
+    "postinstall": "cd server && npm i"
+  },
+  "dependencies": {
+    "preact": "^10.5.7",
+    "spectre.css": "^0.5.9"
+  },
+  "engines": {
+    "node": "14.x"
+  },
+  "devDependencies": {
+    "preact-render-to-string": "^5.1.12",
+    "wmr": "0.0.12"
+  }
+}
