@@ -50,7 +50,6 @@ export const check = api(async (req, res) => {
   return { url: pageUrl, scripts };
 });
 
-// const origin = req => `http${req.socket.encrypted?'s':''}://${req.headers['x-forwarded-host'] || req.headers.host}`;
 
 export const script = api(async (req, res) => {
   res.setHeader('Cache-Control', 'public, max-age=7200');
