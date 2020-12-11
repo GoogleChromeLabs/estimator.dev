@@ -48,6 +48,7 @@ export async function withPage(fn) {
   try {
     page = await browser.newPage();
     page._client.send('Network.setBypassServiceWorker', {bypass: true});
+    await page.setUserAgent('Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.47 Safari/537.36');
     await page.setRequestInterception(true);
     page.on('request', interceptRequest);
     return await fn(page);
