@@ -336,7 +336,7 @@ function Result({ url, scripts }) {
         <div class="card-subtitle">
           <p class="mb-2">
             Currently, this site ships <strong>{bytes(aggregate.size[mode])}</strong> of
-            Javascript (<abbr title="click to toggle" onClick={toggleMode}>{mode=='gz'?'compresed':'uncompressed'}</abbr>).
+            Javascript (<abbr title="click to toggle" onClick={toggleMode}>{mode=='gz'?'compressed':'uncompressed'}</abbr>).
           </p>
           <p>
             Switching to modern JS would reduce that to <strong>{bytes(aggregate.modernSize[mode])}</strong>,
@@ -377,7 +377,7 @@ function Result({ url, scripts }) {
             <div class="card-body" style="background:#f8fafc;">
               <h6 class="card-title h6">Using webpack?</h6>
               <div class="card-subtitle my-1 text-small text-italic text-muted">
-                It looks like this site might be bundled with Webpack.
+                It looks like this site might be bundled with webpack.
               </div>
               <div class="card-subtitle text-small">
                 If so, you can turn on modern JavaScript in 5 minutes by installing <a target="_blank" href="https://github.com/developit/optimize-plugin">OptimizePlugin</a>.
