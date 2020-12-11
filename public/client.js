@@ -79,13 +79,13 @@ function App() {
   const current = useRef();
   current.url = url;
   current.loading = loading;
-  
+
   useEffect(() => {
     if (initialUrl) {
       doCheck();
     }
   }, []);
-  
+
   const urlChanged = useCallback(e => {
     setUrl(e.target.value);
   }, []);
@@ -115,12 +115,12 @@ function App() {
         });
       });
   }, []);
-  
+
   const scriptKey = (data && data.scripts || []).map(s => s.url).filter(Boolean).join('\n');
   useEffect(() => {
     const scripts = data && data.scripts;
     if (!scripts || !scripts.length) return;
-    
+
     const aborts = [];
     let running = true;
     for (let i=0; i<scripts.length; i++) {
@@ -139,7 +139,7 @@ function App() {
         });
       }
     }
-    
+
     return () => {
       running = false;
       for (const a of aborts) if (a) a();
@@ -151,13 +151,13 @@ function App() {
     if (error) acc.push(<div class="toast toast-error"><pre>{url}</pre><pre>{error}</pre></div>);
     return acc;
   }, []);
-  
+
   if (data && data.error) {
     errors = [
       <div class="toast toast-error">{String(data.error)}</div>
     ];
   }
-  
+
   return (
     <div id="app">
       <header class="navbar my-2">
@@ -177,7 +177,7 @@ function App() {
           </a>
         </section>
       </header>
-      
+
       <div class="container grid-md">
         <form class="my-2" action="#" autocomplete="off" onSubmit={doCheck}>
           <div class="input-group">
@@ -190,6 +190,10 @@ function App() {
               placeholder="example.com"
               value={url}
               onInput={urlChanged}
+              autoComplete="off"
+              autoCorrect="off"
+              autoCapitalize="off"
+              spellCheck="false"
             />
             <button type="submit" class={`btn btn-primary btn-lg input-group-btn${loading?' loading':''}`} disabled={loading}>
               Calculate
@@ -245,7 +249,7 @@ function Result({ url, scripts }) {
       return acc;
     }, { size: { raw:0, gz:0 }, modernSize: { raw:0, gz:0 }, logs: [], webpack: false, final: true });
   }, [scripts]);
-  
+
   const [mode, toggleMode] = useReducer(mode => mode=='gz'?'raw':'gz', 'raw');
   const diff = getDiff(aggregate, mode);
   const diffCompressed = getDiff(aggregate, 'gz');
@@ -258,7 +262,7 @@ function Result({ url, scripts }) {
       self.ma.trackEvent('Result-Gz', aggregate.size.gz, diffCompressed);
     }
   }
-  
+
   const getDomain = u => {
     const parsed = new URL(u);
     return parsed.host==parsedUrl.host ? '' : parsed.hostname;
