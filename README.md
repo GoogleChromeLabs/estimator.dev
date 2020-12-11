@@ -10,8 +10,8 @@ Submitting a URL for analysis is stateless. The service does not store any infor
 
 ```sh
 # clone it
-git clone git@github.com:GoogleChromeLabs/estimator.git
-cd estimator
+git clone git@github.com:GoogleChromeLabs/estimator.dev.git
+cd estimator.dev
 
 # install dependencies and firebase CLI
 npm install
