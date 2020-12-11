@@ -16,6 +16,6 @@
   },
   "devDependencies": {
     "preact-render-to-string": "^5.1.12",
-    "wmr": "0.0.12"
+    "wmr": "^1.0.0"
   }
 }
