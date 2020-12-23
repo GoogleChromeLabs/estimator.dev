@@ -11,7 +11,7 @@ A minimal Google Analytics ping is used to record page visits _(URL and referrer
 
 ```sh
 # clone it
-git clone git@github.com:GoogleChromeLabs/estimator.dev.git
+git clone https://github.com/GoogleChromeLabs/estimator.dev.git
 cd estimator.dev
 
 # install dependencies and firebase CLI
