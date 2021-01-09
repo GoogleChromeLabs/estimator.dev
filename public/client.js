@@ -230,9 +230,10 @@ const round = s => s > 10 ? (s|0) : s.toFixed(1);
 const bytes = s => s>=1.5e6 ? round(s/1e6)+'mb' : s>=1500 ? round(s/1e3)+'kb' : s+'b';
 
 const getDiff = (item, mode) => Math.round((item.size[mode] - (item.modernSize || item.size)[mode]) / item.size[mode] * 100);
+const addProtocol = url => /^https?:\/\//.test(url) ? url : `https://${url}`;
 
 function Result({ url, scripts }) {
-  const parsedUrl = new URL(/^https?:\/\//.test(url) ? url : `https://${url}`);
+  const parsedUrl = new URL(addProtocol(url));
 
   let aggregate = useMemo(() => {
     return scripts && scripts.reduce((acc, item) => {
@@ -264,10 +265,10 @@ function Result({ url, scripts }) {
   }
 
   const getDomain = u => {
-    const parsed = new URL(u);
+    const parsed = new URL(addProtocol(u));
     return parsed.host==parsedUrl.host ? '' : parsed.hostname;
   };
-  const getPath = u => new URL(u).pathname.replace(/[^/?#]+(?:[?#].*)?$/g, '').replace(/^\/$/g, '');
+  const getPath = u => new URL(addProtocol(u)).pathname.replace(/[^/?#]+(?:[?#].*)?$/g, '').replace(/^\/$/g, '');
   const getBasename = u => (u.match(/([^/?#]+)(?:[?#].*)?$/) || [0,u])[1];
   const getTip = u => [getPath(u),getDomain(u)].filter(Boolean).join('\n')
 
