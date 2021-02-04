@@ -18,6 +18,9 @@ cd estimator.dev
 npm install
 npm install -g firebase-tools
 
+# build the front-end:
+npm run build
+
 # start the server and functions
 firebase emulators:start
 ```
