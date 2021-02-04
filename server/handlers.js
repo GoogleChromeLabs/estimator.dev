@@ -22,16 +22,25 @@ async function getSize(str) {
   return { raw: Buffer.byteLength(str), gz: await gzipSize(str) };
 }
 
+const MAX_SIZE = 2000000; // 2Mb
+
 const SCRIPT_CACHE = new Cache({ maxSize: 500 });
 const MODERN_CACHE = new Cache({ maxSize: 500 });
 
 export const check = api(async (req, res) => {
   const { pageUrl, coverage } = await withPage(async page => {
     await page.coverage.startJSCoverage();
-    await page.goto(req.body.url, {
-      timeout: 20000,
-      waitUntil: 'networkidle2'
-    });
+    try {
+      await page.goto(req.body.url, {
+        timeout: 20000,
+        waitUntil: 'networkidle2'
+      });
+    } catch (e) {
+      try { await page.coverage.stopJSCoverage() } catch (e) {}
+      if (/ERR_FAILED/.test(e)) throw `URL failed to load (possibly blocked)`;
+      if (/(timed out|time ?out)/i.test(e)) throw `Page load took too long`;
+      throw e.message;
+    }
     return {
       pageUrl: page.url(),
       coverage: await page.coverage.stopJSCoverage()
@@ -89,24 +98,31 @@ export const script = api(async (req, res) => {
     SCRIPT_CACHE.set(url, { text, size });
   }
   let modern, logs, modernSize, error;
-  try {
-    const result = await toModern(text);
-    modern = result.code;
-    logs = result.logs.filter(l => !/external module reference:/i.test(l)).map(l => l.trim().split('\n')[0].slice(0, 200));
-    modernSize = await getSize(modern);
-    if (modernSize.gz > size.gz) modernSize.gz = size.gz + 1;
-    if (modernSize.raw > size.raw) modernSize.raw = size.raw + 1;
-  } catch (e) {
-    error = String(e);
-  }
-  if (logs) {
-    let logSize = 0;
-    for (let i=0; i<logs.length; i++) {
-      if (logSize > 4000) {
-        logs.length = i;
-        break;
+  if (size.raw > MAX_SIZE) {
+    modern = text;
+    logs = [];
+    logs[0] = error = `Refusing to process more than 2MB of JavaScript.`;
+    modernSize = Object.assign({}, size);
+  } else {
+    try {
+      const result = await toModern(text);
+      modern = result.code;
+      logs = result.logs.filter(l => !/external module reference:/i.test(l)).map(l => l.trim().split('\n')[0].slice(0, 200));
+      modernSize = await getSize(modern);
+      if (modernSize.gz > size.gz) modernSize.gz = size.gz + 1;
+      if (modernSize.raw > size.raw) modernSize.raw = size.raw + 1;
+    } catch (e) {
+      error = String(e);
+    }
+    if (logs) {
+      let logSize = 0;
+      for (let i=0; i<logs.length; i++) {
+        if (logSize > 4000) {
+          logs.length = i;
+          break;
+        }
+        logSize += logs[i].length + 4;
       }
-      logSize += logs[i].length + 4;
     }
   }
   const webpack = logs && !!logs.find(l => /is a Webpack bundle/i.test(l));
@@ -128,6 +144,9 @@ export const compiled = async (req, res) => {
   const cached = MODERN_CACHE.get(url);
   if (!cached) {
     const text = (await get(url)).body;
+    if (Buffer.byteLength(text) > MAX_SIZE) {
+      throw `Refusing to process JavaScript larger than 1MB compressed.`;
+    }
     if (/^\s*<(\!DOCTYPE|html|body|head|title)\b/i.test(text)) throw 'Not JavaScript';
     const result = await toModern(text);
     return res.end(result.code);

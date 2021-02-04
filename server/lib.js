@@ -50,7 +50,7 @@ import * as zlib from 'zlib';
 const httpsAgent = new HttpsAgent({ keepAlive: true, keepAliveMsecs: 60e3 });
 const httpAgent = new HttpAgent({ keepAlive: true, keepAliveMsecs: 60e3 });
 
-export async function get(url) {
+export async function get(url, { maxSize } = {}) {
 	return new Promise((resolve, reject) => {
     let redirectCount = 0;
     doFetch(url);
@@ -63,7 +63,7 @@ export async function get(url) {
       const g = https ? httpsGet : httpGet;
       const agent = https ? httpsAgent : httpAgent;
 
-      g(url, {
+      let req = g(url, {
         agent,
         headers: {
           'Accept-Encoding': `${zlib.createBrotliDecompress ? 'br,' : ''}gzip,deflate`,
@@ -83,13 +83,14 @@ export async function get(url) {
             ok = status<400 && status>=100,
             headers = res.headers,
             body = '',
+            size = 0,
             bodyStream;
         if (status >= 300 && status < 400 && headers.location) {
           const newUrl = new URL(headers.location, url).href;
           if (++redirectCount > 10 || newUrl === url) {
             return reject(Error('Too many redirects'));
           }
-          console.log(`REDIRECT to ${headers.location} from ${url}:\n  ${newUrl}`);
+          // console.log(`REDIRECT to ${headers.location} from ${url}:\n  ${newUrl}`);
           return doFetch(newUrl);
         }
         switch (headers['content-encoding']) {
@@ -101,8 +102,20 @@ export async function get(url) {
             res.pipe(bodyStream = zlib.createUnzip(), {end:true});
             break;
         }
-        (bodyStream || res).on('data', chunk => { body += chunk.toString('utf-8'); });
-        (bodyStream || res).once('end', () => { resolve({ ok, status, body, headers, res }) });
+        (bodyStream || res).on('data', chunk => {
+          size += Buffer.byteLength(chunk);
+          if (maxSize && size > maxSize) {
+            req.destroy();
+            (bodyStream || res).destroy();
+            res.removeAllListeners();
+            return reject(Error('Response body too large'));
+          }
+          body += chunk.toString('utf-8');
+        });
+        (bodyStream || res).once('end', () => {
+          res.removeAllListeners();
+          resolve({ ok, status, body, headers, res });
+        });
       });
     }
 	});

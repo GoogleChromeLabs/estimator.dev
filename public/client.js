@@ -20,6 +20,9 @@ const memoize = (fn, cache={}) => arg => cache[arg] || (cache[arg] = fn(arg));
 
 async function processResponse(res) {
   let data = await res.text();
+  if (res.status === 200 && data === '') {
+    return { error: 'timed out' };
+  }
   try {
     data = JSON.parse(data);
   } catch(e) {}

@@ -16,8 +16,8 @@ const handlers = import('./handlers.js');
 
 const DEFAULTS = functions.runWith({
 	maxInstances: 100,
-	memory: '2GB',
-	timeoutSeconds: 60
+	memory: '512MB',
+	timeoutSeconds: 30
 });
 
 let h;
