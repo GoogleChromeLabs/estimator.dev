@@ -344,7 +344,7 @@ function Result({ url, scripts }) {
         <div class="card-subtitle">
           <p class="mb-2">
             Currently, this site ships <strong>{bytes(aggregate.size[mode])}</strong> of
-            Javascript (<abbr title="click to toggle" onClick={toggleMode}>{mode=='gz'?'compressed':'uncompressed'}</abbr>).
+            JavaScript (<abbr title="click to toggle" onClick={toggleMode}>{mode=='gz'?'compressed':'uncompressed'}</abbr>).
           </p>
           <p>
             Switching to modern JS would reduce that to <strong>{bytes(aggregate.modernSize[mode])}</strong>,
