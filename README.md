@@ -1,6 +1,6 @@
 **⚠️ This repo is no longer maintained. We now recommend developers use the [`legacy-javascript`](https://github.com/GoogleChrome/lighthouse/pull/10303) audit in Lighthouse to assess the benefits of switching to modern JavaScript syntax.**
 
-# [EStimator](https://estimator.dev)
+# EStimator
 
 Calculate the size and performance improvement a site could achieve by switching to modern JavaScript syntax.
 
